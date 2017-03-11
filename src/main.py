@@ -1,6 +1,6 @@
 import requests
-import sys
 from random import randint
+from hashlib import sha256
 from flask import Flask
 from sense_hat import SenseHat
 import threading
@@ -101,15 +101,34 @@ def one(_, x):
 
 # Roll dice
 def roll():
-    own_diceroll = randint( -maxint - 1, maxint )
-    logging.info( 'dice roll: ' + own_diceroll )
-    display( diceroll % 6 + 1, False )
+    print( 'In roll()' )
+    own_diceroll = randint( 0, 1000 )
+    print( 'own dice roll: %d' %( own_diceroll, ) )
+    roll = own_diceroll % 6 + 1
+    print( 'roll: %d' %( roll, ) )
+    display( roll, False )
+    return own_diceroll
 
-# Sends a GET request with own dice roll value as a parameter
-def send( diceroll ):
-    r = requests.get('http:#0.0.0.0:80/combine', params=diceroll)
-    logging.info( 'r.text: ' + r.text )
-    display( combine( diceroll, r.text ), True )
+# Sends a POST request to /start with hash of own dice roll value as a parameter
+def start( diceroll ):
+    print( 'In start()' )
+    print( str( diceroll ) )
+    h = hashlib.sha256()
+    print( 'Initialised h' )
+    # print( diceroll )
+    h.update( "abs" )
+    print( 'Updated h')
+    hash = h.hexdigest()
+    print( 'Assigned %s to hash' %( hash, ) )
+    # h = sha256( '%d' %( diceroll, ) ).hexdigest()
+    # print( 'hash: %d' %( h, ) )
+    j = "{ 'hash': h }"
+    print( 'json: %s' %( j, ) )
+    r = requests.post( 'https://6074bef5efb0b8470f971bc524900c8e986040f9e4382942f6231162557d08.resindevice.io/start', json=j )
+    # r.json should contain the other diceroll and its hash
+    print( 'r.json: %s' %( r.json, ) )
+    # display( combine( diceroll, r.json['diceroll'] ), True )
+    sense.show_message('Confused')
 
 # Computes the combined dice roll
 def combine( own, other ):
@@ -149,7 +168,9 @@ def hello_world():
 
 @app.route('/roll')
 def get_roll():
-    roll()
+    print( 'In get_roll()' )
+    start( roll() )
+    return 'ROLL'
 
 @app.route('/combine')
 def get_combine():
