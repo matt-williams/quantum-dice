@@ -7,7 +7,7 @@ RUN apt-get update && apt-get install -yq \
    sense-hat && \
    apt-get clean && rm -rf /var/lib/apt/lists/*
 RUN apt-get update && apt-get install -yq \
-   python-rtimulib && \
+   python3-rtimulib && \
    apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Set our working directory
