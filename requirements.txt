@@ -1,2 +1,1 @@
 Flask==0.10.1
-sense_hat==2.2.0
