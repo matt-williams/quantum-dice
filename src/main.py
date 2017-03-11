@@ -188,7 +188,7 @@ def get_start():
     print( 'In get_start()' )
     return 'START'
 
-@app.route('/respond')
+@app.route('/respond', methods=['GET', 'POST'])
 def get_respond():
     print( 'In get_respond()' )
     respond()
@@ -203,25 +203,34 @@ class State:
 
     def __init__(self):
         self.ticks_mod = 0
-        self.rolling_ticks = 0
+        self.rolling_ticks = 1
         self.prev_dice_value = randint(1, 6)
         self.dice_value = randint(1, 6)
+        self.final_dice_value = None
         self.prev_dot_color = blue
         self.dot_color = red
+        self.final_dice_color = None
 
     def tick(self):
         self.ticks_mod = (self.ticks_mod + 1) % State.TICK_MOD
         if self.ticks_mod == 0:
-            if self.rolling_ticks > 1:
-                self.rolling_ticks = max(self.rolling_ticks - 1, 0)
+            if self.rolling_ticks > 0:
                 self.prev_dice_value = self.dice_value
-                self.dice_value = randint(1, 6)
                 prev_dot_color = self.prev_dot_color
                 self.prev_dot_color = self.dot_color
                 self.dot_color = prev_dot_color
-            else:
-                self.rolling_ticks = 0
-            
+                if self.rolling_ticks > 1:
+                    self.dice_value = randint(1, 6)
+                elif self.final_dice_color != self.dot_color or self.final_dice_value is None:
+                    self.rolling_ticks = self.rolling_ticks + 1
+                    self.dice_value = randint(1, 6)
+                else:
+                    self.dice_value = self.final_dice_value
+                    self.final_dice_value = None
+                    self.final_dice_color = None
+
+            self.rolling_ticks = max(self.rolling_ticks - 1, 0)
+
         if self.rolling_ticks > 0:
             sense.set_pixels(merge(int_mod6_to_string(self.prev_dice_value, black, self.prev_dot_color), int_mod6_to_string(self.dice_value, black, self.dot_color), 1 - self.ticks_mod / State.TICK_MOD))
         else:
@@ -229,6 +238,8 @@ class State:
 
     def roll(self, delta):
         self.rolling_ticks = max(self.rolling_ticks, self.rolling_ticks * 0.75 + delta * 5);
+        self.final_dice_value = randint(1, 6)
+        self.final_dice_color = [red, blue][randint(0, 1)]
 state = State()
 
 class AccelerometerWatcher:
