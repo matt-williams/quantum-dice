@@ -3,25 +3,99 @@ import sys
 from random import randint
 from flask import Flask
 from sense_hat import SenseHat
+import threading
 
 app = Flask(__name__)
 sense = SenseHat()
 
-@app.route('/')
-def hello_world():
-    sense.show_message("Hello world!")
-    return 'Hello World!'
+# SenseHat display
+O = [255, 255, 255]
+red = [255, 0, 0]
+blue = [0, 0, 255]
 
-@app.get('/roll')
-def get_roll():
-    roll()
+def error(O, X):
+    return [
+    X, X, X, X, X, X, X, X,
+    X, X, X, X, X, X, X, X,
+    X, X, X, X, X, X, X, X,
+    X, X, X, X, X, X, X, X,
+    X, X, X, X, X, X, X, X,
+    X, X, X, X, X, X, X, X,
+    X, X, X, X, X, X, X, X,
+    X, X, X, X, X, X, X, X
+    ]
 
-@app.get('/combine')
-def get_combine():
-    sense.show_message("Combine")
+def six(O, X):
+    return [
+    X, X, O, X, X, O, X, X,
+    X, X, O, X, X, O, X, X,
+    O, O, O, O, O, O, O, O,
+    O, O, O, O, O, O, O, O,
+    O, O, O, O, O, O, O, O,
+    O, O, O, O, O, O, O, O,
+    X, X, O, X, X, O, X, X,
+    X, X, O, X, X, O, X, X
+    ]
 
-if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=80)
+def five(O, X):
+    return [
+    X, X, O, O, O, O, X, X,
+    X, X, O, O, O, O, X, X,
+    O, O, O, O, O, O, O, O,
+    O, O, O, X, X, O, O, O,
+    O, O, O, X, X, O, O, O,
+    O, O, O, O, O, O, O, O,
+    X, X, O, O, O, O, X, X,
+    X, X, O, O, O, O, X, X
+    ]
+
+def four(O, X):
+    return [
+    X, X, O, O, O, O, X, X,
+    X, X, O, O, O, O, X, X,
+    O, O, O, O, O, O, O, O,
+    O, O, O, O, O, O, O, O,
+    O, O, O, O, O, O, O, O,
+    O, O, O, O, O, O, O, O,
+    X, X, O, O, O, O, X, X,
+    X, X, O, O, O, O, X, X
+    ]
+
+def three(O, X):
+    return [
+    X, X, O, O, O, O, O, O,
+    X, X, O, O, O, O, O, O,
+    O, O, O, O, O, O, O, O,
+    O, O, O, X, X, O, O, O,
+    O, O, O, X, X, O, O, O,
+    O, O, O, O, O, O, O, O,
+    O, O, O, O, O, O, X, X,
+    O, O, O, O, O, O, X, X
+    ]
+
+def two(O, X):
+    return [
+    X, X, O, O, O, O, O, O,
+    X, X, O, O, O, O, O, O,
+    O, O, O, O, O, O, O, O,
+    O, O, O, O, O, O, O, O,
+    O, O, O, O, O, O, O, O,
+    O, O, O, O, O, O, O, O,
+    O, O, O, O, O, O, X, X,
+    O, O, O, O, O, O, X, X
+    ]
+
+def one(O, X):
+    return [
+    O, O, O, O, O, O, O, O,
+    O, O, O, O, O, O, O, O,
+    O, O, O, O, O, O, O, O,
+    O, O, O, X, X, O, O, O,
+    O, O, O, X, X, O, O, O,
+    O, O, O, O, O, O, O, O,
+    O, O, O, O, O, O, O, O,
+    O, O, O, O, O, O, O, O
+    ]
 
 # Roll dice
 def roll():
@@ -67,84 +141,32 @@ def int_mod6_to_string( int ):
         5 : 'six'
     } [ int ]
 
-# SenseHat display
-O = [255, 255, 255]
-red = [255, 0, 0]
-blue = [0, 0, 255]
+@app.route('/')
+def hello_world():
+    sense.show_message("Hello world!")
+    return 'Hello World!'
 
-error = [
-X, X, X, X, X, X, X, X,
-X, X, X, X, X, X, X, X,
-X, X, X, X, X, X, X, X,
-X, X, X, X, X, X, X, X,
-X, X, X, X, X, X, X, X,
-X, X, X, X, X, X, X, X,
-X, X, X, X, X, X, X, X,
-X, X, X, X, X, X, X, X
-]
+@app.route('/roll')
+def get_roll():
+    roll()
 
-six = [
-X, X, O, X, X, O, X, X,
-X, X, O, X, X, O, X, X,
-O, O, O, O, O, O, O, O,
-O, O, O, O, O, O, O, O,
-O, O, O, O, O, O, O, O,
-O, O, O, O, O, O, O, O,
-X, X, O, X, X, O, X, X,
-X, X, O, X, X, O, X, X
-]
+@app.route('/combine')
+def get_combine():
+    sense.show_message("Combine")
 
-five = [
-X, X, O, O, O, O, X, X,
-X, X, O, O, O, O, X, X,
-O, O, O, O, O, O, O, O,
-O, O, O, X, X, O, O, O,
-O, O, O, X, X, O, O, O,
-O, O, O, O, O, O, O, O,
-X, X, O, O, O, O, X, X,
-X, X, O, O, O, O, X, X
-]
+sense.set_imu_config(False, True, False) 
+old_acc = sense.get_accelerometer_raw()
+def poll_sensors():
+    global old_acc
+    acc = sense.get_accelerometer_raw()
+    acc_delta = {'x': acc['x'] - old_acc['x'], 'y': acc['y'] - old_acc['y'], 'z': acc['z'] - old_acc['z']}
+    if abs(acc_delta['x']) > 0.1 or abs(acc_delta['y']) > 0.1 or abs(acc_delta['z']) > 0.1:
+        print(acc)
+        display(randint(1, 6), False)
+    old_acc = acc
+    threading.Timer(0.01, poll_sensors, ()).start()
 
-four = [
-X, X, O, O, O, O, X, X,
-X, X, O, O, O, O, X, X,
-O, O, O, O, O, O, O, O,
-O, O, O, O, O, O, O, O,
-O, O, O, O, O, O, O, O,
-O, O, O, O, O, O, O, O,
-X, X, O, O, O, O, X, X,
-X, X, O, O, O, O, X, X
-]
+if __name__ == '__main__':
+    poll_sensors()
+    app.run(host='0.0.0.0', port=80)
 
-three = [
-X, X, O, O, O, O, O, O,
-X, X, O, O, O, O, O, O,
-O, O, O, O, O, O, O, O,
-O, O, O, X, X, O, O, O,
-O, O, O, X, X, O, O, O,
-O, O, O, O, O, O, O, O,
-O, O, O, O, O, O, X, X,
-O, O, O, O, O, O, X, X
-]
-
-two = [
-X, X, O, O, O, O, O, O,
-X, X, O, O, O, O, O, O,
-O, O, O, O, O, O, O, O,
-O, O, O, O, O, O, O, O,
-O, O, O, O, O, O, O, O,
-O, O, O, O, O, O, O, O,
-O, O, O, O, O, O, X, X,
-O, O, O, O, O, O, X, X
-]
-
-one = [
-O, O, O, O, O, O, O, O,
-O, O, O, O, O, O, O, O,
-O, O, O, O, O, O, O, O,
-O, O, O, X, X, O, O, O,
-O, O, O, X, X, O, O, O,
-O, O, O, O, O, O, O, O,
-O, O, O, O, O, O, O, O,
-O, O, O, O, O, O, O, O
-]
