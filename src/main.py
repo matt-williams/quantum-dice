@@ -176,11 +176,11 @@ def int_mod6_to_string(value, _, x):
         6 : six
     }[value](_, x)
 
-@app.route('/roll')
-def get_roll():
-    print( 'In get_roll()' )
-    start( roll() )
-    return 'ROLL'
+#@app.route('/roll')
+#def get_roll():
+#    print( 'In get_roll()' )
+#    start( roll() )
+#    return 'ROLL'
 
 @app.route('/start')
 def get_start():
@@ -275,8 +275,44 @@ class AccelerometerWatcher:
             state.roll(abs(acc_delta['x']) + abs(acc_delta['y']) + abs(acc_delta['z']))
 acc_watcher = AccelerometerWatcher()
 
-@app.route('/roll/<roll>')
-def recv_roll(roll):
+@app.route('/roll/1')
+def recv_roll1():
+    roll = 1
+    print("Received roll %d" % (roll,))
+    state.do_roll(roll)
+    return ''
+
+@app.route('/roll/2')
+def recv_roll2():
+    roll = 2
+    print("Received roll %d" % (roll,))
+    state.do_roll(roll)
+    return ''
+
+@app.route('/roll/3')
+def recv_roll3():
+    roll = 3
+    print("Received roll %d" % (roll,))
+    state.do_roll(roll)
+    return ''
+
+@app.route('/roll/4')
+def recv_roll4():
+    roll = 4
+    print("Received roll %d" % (roll,))
+    state.do_roll(roll)
+    return ''
+
+@app.route('/roll/5')
+def recv_roll5():
+    roll = 5
+    print("Received roll %d" % (roll,))
+    state.do_roll(roll)
+    return ''
+
+@app.route('/roll/6')
+def recv_roll6():
+    roll = 6
     print("Received roll %d" % (roll,))
     state.do_roll(roll)
     return ''
