@@ -7,7 +7,7 @@ from flask import Flask
 from sense_hat import SenseHat
 import threading
 
-device_uuid = os.environ['6074bef5efb0b8470f971bc524900c8e986040f9e4382942f6231162557d08']
+device_uuid = os.environ['RESIN_DEVICE_UUID']
 peer_device_uuid = {
     '6074bef5efb0b8470f971bc524900c8e986040f9e4382942f6231162557d08': '5aa4169d9d408523669f4c05a5799f423809d947245aa52a91346a5fc3387a',
     '5aa4169d9d408523669f4c05a5799f423809d947245aa52a91346a5fc3387a': '6074bef5efb0b8470f971bc524900c8e986040f9e4382942f6231162557d08'
