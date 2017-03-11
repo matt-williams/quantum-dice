@@ -24,8 +24,66 @@ O, O, O, O, O, O, O, O,
 O, O, O, O, O, O, O, O,
 O, O, O, O, O, O, O, O,
 O, O, O, O, O, O, O, O,
+X, X, O, X, X, O, X, X,
+X, X, O, X, X, O, X, X
+]
+
+
+five = [
+X, X, O, O, O, O, X, X,
+X, X, O, O, O, O, X, X,
+O, O, O, O, O, O, O, O,
+O, O, O, X, X, O, O, O,
+O, O, O, X, X, O, O, O,
+O, O, O, O, O, O, O, O,
+X, X, O, O, O, O, X, X,
+X, X, O, O, O, O, X, X
+]
+
+
+four = [
+X, X, O, O, O, O, X, X,
+X, X, O, O, O, O, X, X,
+O, O, O, O, O, O, O, O,
+O, O, O, O, O, O, O, O,
+O, O, O, O, O, O, O, O,
+O, O, O, O, O, O, O, O,
+X, X, O, O, O, O, X, X,
+X, X, O, O, O, O, X, X
+]
+
+
+three = [
 X, X, O, O, O, O, O, O,
 X, X, O, O, O, O, O, O,
+O, O, O, O, O, O, O, O,
+O, O, O, X, X, O, O, O,
+O, O, O, X, X, O, O, O,
+O, O, O, O, O, O, O, O,
+O, O, O, O, O, O, X, X,
+O, O, O, O, O, O, X, X
+]
+
+two = [
+X, X, O, O, O, O, O, O,
+X, X, O, O, O, O, O, O,
+O, O, O, O, O, O, O, O,
+O, O, O, O, O, O, O, O,
+O, O, O, O, O, O, O, O,
+O, O, O, O, O, O, O, O,
+O, O, O, O, O, O, X, X,
+O, O, O, O, O, O, X, X
+]
+
+one = [
+O, O, O, O, O, O, O, O,
+O, O, O, O, O, O, O, O,
+O, O, O, O, O, O, O, O,
+O, O, O, X, X, O, O, O,
+O, O, O, X, X, O, O, O,
+O, O, O, O, O, O, O, O,
+O, O, O, O, O, O, O, O,
+O, O, O, O, O, O, O, O
 ]
 
 sense.set_pixels(six)
