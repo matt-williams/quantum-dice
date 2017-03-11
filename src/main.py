@@ -255,7 +255,7 @@ class State:
             self.cool_down_ticks = min(self.cool_down_ticks + 2, 10)
 
     def do_roll(self, roll):
-        if self.cool_down_ticks == 0 and self.rolling_ticks == 0:
+        if self.rolling_ticks == 0:
             self.final_dice_value = roll
             self.final_dice_color = [red, blue][self.final_dice_value % 2]
             self.rolling_ticks = 10
