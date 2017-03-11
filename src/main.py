@@ -246,13 +246,13 @@ class State:
             sense.set_pixels(int_mod6_to_string(self.dice_value, black, self.dot_color))
 
     def roll(self, delta):
-        if self.cool_down_ticks == 0:
-            if self.rolling_ticks == 0:
-                self.final_dice_value = randint(1, 6)
-                send_roll(self.final_dice_value)
-                self.final_dice_color = [red, blue][self.final_dice_value % 2]
-            #self.rolling_ticks = max(self.rolling_ticks, self.rolling_ticks * 0.75 + delta * 5);
+        if self.cool_down_ticks == 0 && self.rolling_ticks == 0:
+            self.final_dice_value = randint(1, 6)
+            self.final_dice_color = [red, blue][self.final_dice_value % 2]
             self.rolling_ticks = 10
+            send_roll(self.final_dice_value)
+        if self.cool_down_ticks > 0:
+            self.cool_down_ticks = min(self.cool_down_ticks + 2, 10)
 
     def do_roll(self, roll):
         if self.cool_down_ticks == 0 and self.rolling_ticks == 0:
@@ -271,7 +271,7 @@ class AccelerometerWatcher:
         acc = sense.get_accelerometer_raw()
         acc_delta = {'x': acc['x'] - self.old_acc['x'], 'y': acc['y'] - self.old_acc['y'], 'z': acc['z'] - self.old_acc['z']}
         self.old_acc = acc
-        if abs(acc_delta['x']) > 0.1 or abs(acc_delta['y']) > 0.1 or abs(acc_delta['z']) > 0.1:
+        if abs(acc_delta['x']) > 0.2 or abs(acc_delta['y']) > 0.2 or abs(acc_delta['z']) > 0.2:
             state.roll(abs(acc_delta['x']) + abs(acc_delta['y']) + abs(acc_delta['z']))
 acc_watcher = AccelerometerWatcher()
 
