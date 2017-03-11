@@ -1,6 +1,7 @@
 import requests
 import sys
 import os
+import json
 from random import randint
 from hashlib import sha256
 from flask import Flask
@@ -122,22 +123,26 @@ def roll():
 def start( diceroll ):
     print( 'In start()' )
     print( str( diceroll ) )
-    h = hashlib.sha256()
-    print( 'Initialised h' )
+    # h = hashlib.sha256()
+    # print( 'Initialised h' )
     # print( diceroll )
-    h.update( "abs" )
-    print( 'Updated h')
-    hash = h.hexdigest()
-    print( 'Assigned %s to hash' %( hash, ) )
+    # h.update( "abs" )
+    # print( 'Updated h')
+    # hash = h.hexdigest()
+    # print( 'Assigned %s to hash' %( hash, ) )
     # h = sha256( '%d' %( diceroll, ) ).hexdigest()
     # print( 'hash: %d' %( h, ) )
-    j = "{ 'hash': h }"
+    j = json.dumps( { 'hash': diceroll } )
     print( 'json: %s' %( j, ) )
-    r = requests.post( 'https://%s.resindevice.io/start' % (peer_device_uuid,), json=j )
+    r = requests.post( 'https://%s.resindevice.io/respond' % (peer_device_uuid,), json=j )
     # r.json should contain the other diceroll and its hash
-    print( 'r.json: %s' %( r.json, ) )
     # display( combine( diceroll, r.json['diceroll'] ), True )
-    sense.show_message('Confused')
+
+# When receiving a POST request to /start
+def respond():
+   print( 'In respond()' )
+   j = request.json
+   print( j ) 
 
 # Computes the combined dice roll
 def combine( own, other ):
@@ -186,6 +191,17 @@ def get_roll():
     print( 'In get_roll()' )
     start( roll() )
     return 'ROLL'
+
+@app.route('/start')
+def get_start():
+    print( 'In get_start()' )
+    return 'START'
+
+@app.route('/respond')
+def get_respond():
+    print( 'In get_respond()' )
+    respond()
+    return RESPOND
 
 @app.route('/combine')
 def get_combine():
