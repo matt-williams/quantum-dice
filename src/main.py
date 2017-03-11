@@ -9,7 +9,7 @@ app = Flask(__name__)
 sense = SenseHat()
 
 # SenseHat display
-O = [255, 255, 255]
+O = [0, 0, 0]
 red = [255, 0, 0]
 blue = [0, 0, 255]
 
@@ -101,17 +101,17 @@ def one(O, X):
 def roll():
     own_diceroll = randint( -maxint - 1, maxint )
     logging.info( 'dice roll: ' + own_diceroll )
-    display( diceroll % 6, false )
+    display( diceroll % 6 + 1, False )
 
 # Sends a GET request with own dice roll value as a parameter
 def send( diceroll ):
     r = requests.get('http:#0.0.0.0:80/combine', params=diceroll)
     logging.info( 'r.text: ' + r.text )
-    display( combine( diceroll, r.text ), true )
+    display( combine( diceroll, r.text ), True )
 
 # Computes the combined dice roll
 def combine( own, other ):
-    return ( ( own + other ) % 6 )
+    return ( ( own + other ) % 6 + 1)
 
 # Displays diceroll: own - red, combined - blue
 def display( diceroll, isCombined ):
@@ -123,23 +123,22 @@ def display( diceroll, isCombined ):
             X = blue
         else:
             X = red
-        sense.set_pixels( int_mod6_to_string( diceroll) )
+        sense.set_pixels( int_mod6_to_string( diceroll, O, X) )
 
 # Displays error
 def display_error():
-    X = red
-    sense.set_pixels( error )
+    sense.set_pixels( error(O, red) )
 
 # Converts an int dice roll into a string for display
-def int_mod6_to_string( int ):
+def int_mod6_to_string(value, O, X):
     return {
-        0 : 'one',
-        1 : 'two',
-        2 : 'three',
-        3 : 'four',
-        4 : 'five',
-        5 : 'six'
-    } [ int ]
+        1 : one,
+        2 : two,
+        3 : three,
+        4 : four,
+        5 : five,
+        6 : six
+    } [value](O, X)
 
 @app.route('/')
 def hello_world():
