@@ -1,4 +1,4 @@
-FROM resin/raspberrypi3-debian:jessie-20161130
+FROM resin/raspberrypi3-debian:jessie
 
 WORKDIR /usr/src/app
 ENV INITSYSTEM on
