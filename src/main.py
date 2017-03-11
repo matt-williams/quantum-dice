@@ -116,7 +116,6 @@ def roll():
     print( 'own dice roll: %d' %( own_diceroll, ) )
     roll = own_diceroll % 6 + 1
     print( 'roll: %d' %( roll, ) )
-    display( roll, False )
     return own_diceroll
 
 # Sends a POST request to /start with hash of own dice roll value as a parameter
@@ -198,12 +197,20 @@ def get_respond():
 def get_combine():
     sense.show_message("Combine")
 
+def send_roll(roll):
+    print("Sending roll %d" % (roll,))
+    try:
+        r = requests.get( 'https://%s.resindevice.io/roll/%d' % (peer_device_uuid, roll))
+    except e:
+        print(e)
+
 class State:
     TICK_MOD = 5
 
     def __init__(self):
         self.ticks_mod = 0
-        self.rolling_ticks = 1
+        self.rolling_ticks = 0
+        self.cool_down_ticks = 0
         self.prev_dice_value = randint(1, 6)
         self.dice_value = randint(1, 6)
         self.final_dice_value = None
@@ -228,8 +235,10 @@ class State:
                     self.dice_value = self.final_dice_value
                     self.final_dice_value = None
                     self.final_dice_color = None
+                    self.cool_down_ticks = 10
 
             self.rolling_ticks = max(self.rolling_ticks - 1, 0)
+            self.cool_down_ticks = max(self.cool_down_ticks - 1, 0);
 
         if self.rolling_ticks > 0:
             sense.set_pixels(merge(int_mod6_to_string(self.prev_dice_value, black, self.prev_dot_color), int_mod6_to_string(self.dice_value, black, self.dot_color), 1 - self.ticks_mod / State.TICK_MOD))
@@ -237,9 +246,20 @@ class State:
             sense.set_pixels(int_mod6_to_string(self.dice_value, black, self.dot_color))
 
     def roll(self, delta):
-        self.rolling_ticks = max(self.rolling_ticks, self.rolling_ticks * 0.75 + delta * 5);
-        self.final_dice_value = randint(1, 6)
-        self.final_dice_color = [red, blue][randint(0, 1)]
+        if self.cool_down_ticks == 0:
+            if self.rolling_ticks == 0:
+                self.final_dice_value = randint(1, 6)
+                send_roll(self.final_dice_value)
+                self.final_dice_color = [red, blue][self.final_dice_value % 2]
+            #self.rolling_ticks = max(self.rolling_ticks, self.rolling_ticks * 0.75 + delta * 5);
+            self.rolling_ticks = 10
+
+    def do_roll(self, roll):
+        if self.cool_down_ticks == 0 and self.rolling_ticks == 0:
+            self.final_dice_value = roll
+            self.final_dice_color = [red, blue][self.final_dice_value % 2]
+            self.rolling_ticks = 10
+
 state = State()
 
 class AccelerometerWatcher:
@@ -254,6 +274,12 @@ class AccelerometerWatcher:
         if abs(acc_delta['x']) > 0.1 or abs(acc_delta['y']) > 0.1 or abs(acc_delta['z']) > 0.1:
             state.roll(abs(acc_delta['x']) + abs(acc_delta['y']) + abs(acc_delta['z']))
 acc_watcher = AccelerometerWatcher()
+
+@app.route('/roll/<roll>')
+def recv_roll(roll):
+    print("Received roll %d" % (roll,))
+    state.do_roll(roll)
+    return ''
 
 def tick():
     acc_watcher.tick()
