@@ -137,7 +137,8 @@ def start( diceroll ):
 def respond():
    print( 'In respond()' )
    j = request.json
-   print( j ) 
+   print( j )
+   # other_diceroll = json. 
 
 # Computes the combined dice roll
 def combine( own, other ):
@@ -191,7 +192,7 @@ def get_start():
 def get_respond():
     print( 'In get_respond()' )
     respond()
-    return RESPOND
+    return 'RESPOND'
 
 @app.route('/combine')
 def get_combine():
