@@ -1,8 +1,12 @@
 from flask import Flask
+from sense_hat import SenseHat
+
 app = Flask(__name__)
+sense = SenseHat()
 
 @app.route('/')
 def hello_world():
+    sense.show_message("Hello world!")
     return 'Hello World!'
 
 if __name__ == '__main__':
