@@ -123,20 +123,15 @@ def roll():
 def start( diceroll ):
     print( 'In start()' )
     print( str( diceroll ) )
-    # h = hashlib.sha256()
-    # print( 'Initialised h' )
-    # print( diceroll )
-    # h.update( "abs" )
-    # print( 'Updated h')
-    # hash = h.hexdigest()
-    # print( 'Assigned %s to hash' %( hash, ) )
-    # h = sha256( '%d' %( diceroll, ) ).hexdigest()
-    # print( 'hash: %d' %( h, ) )
+    h = sha256()
+    print( 'Initialised h' )
+    h.update(str(diceroll).encode("UTF-8"))
+    print( 'Updated h')
+    hash = h.hexdigest()
+    print( 'Assigned %s to hash' %( hash, ) )
     j = json.dumps( { 'hash': diceroll } )
     print( 'json: %s' %( j, ) )
     r = requests.post( 'https://%s.resindevice.io/respond' % (peer_device_uuid,), json=j )
-    # r.json should contain the other diceroll and its hash
-    # display( combine( diceroll, r.json['diceroll'] ), True )
 
 # When receiving a POST request to /start
 def respond():
@@ -181,11 +176,6 @@ def int_mod6_to_string(value, _, x):
         6 : six
     }[value](_, x)
 
-@app.route('/')
-def hello_world():
-    sense.show_message("Hello world!")
-    return 'Hello World!'
-
 @app.route('/roll')
 def get_roll():
     print( 'In get_roll()' )
@@ -221,13 +211,15 @@ class State:
     def tick(self):
         self.ticks_mod = (self.ticks_mod + 1) % State.TICK_MOD
         if self.ticks_mod == 0:
-            if self.rolling_ticks > 0:
+            if self.rolling_ticks > 1:
                 self.rolling_ticks = max(self.rolling_ticks - 1, 0)
                 self.prev_dice_value = self.dice_value
                 self.dice_value = randint(1, 6)
                 prev_dot_color = self.prev_dot_color
                 self.prev_dot_color = self.dot_color
                 self.dot_color = prev_dot_color
+            else:
+                self.rolling_ticks = 0
             
         if self.rolling_ticks > 0:
             sense.set_pixels(merge(int_mod6_to_string(self.prev_dice_value, black, self.prev_dot_color), int_mod6_to_string(self.dice_value, black, self.dot_color), 1 - self.ticks_mod / State.TICK_MOD))
