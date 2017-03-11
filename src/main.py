@@ -209,14 +209,15 @@ class State:
 
     def __init__(self):
         self.ticks_mod = 0
-        self.rolling_ticks = 0
         self.cool_down_ticks = 0
         self.prev_dice_value = randint(1, 6)
         self.dice_value = randint(1, 6)
-        self.final_dice_value = None
         self.prev_dot_color = blue
         self.dot_color = red
-        self.final_dice_color = None
+        self.final_dice_value = randint(1, 6)
+        self.final_dice_color = [red, blue][self.final_dice_value % 2]
+        self.rolling_ticks = 10
+        send_roll(self.final_dice_value)
 
     def tick(self):
         self.ticks_mod = (self.ticks_mod + 1) % State.TICK_MOD
