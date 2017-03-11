@@ -246,7 +246,7 @@ class State:
             sense.set_pixels(int_mod6_to_string(self.dice_value, black, self.dot_color))
 
     def roll(self, delta):
-        if self.cool_down_ticks == 0 && self.rolling_ticks == 0:
+        if self.cool_down_ticks == 0 and self.rolling_ticks == 0:
             self.final_dice_value = randint(1, 6)
             self.final_dice_color = [red, blue][self.final_dice_value % 2]
             self.rolling_ticks = 10
