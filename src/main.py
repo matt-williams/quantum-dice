@@ -7,94 +7,96 @@ import threading
 
 app = Flask(__name__)
 sense = SenseHat()
+sense.clear()
+sense.set_rotation(90, False)
 
 # SenseHat display
-O = [0, 0, 0]
+black = [0, 0, 0]
 red = [255, 0, 0]
 blue = [0, 0, 255]
 
-def error(O, X):
+def error(_, x):
     return [
-    X, X, X, X, X, X, X, X,
-    X, X, X, X, X, X, X, X,
-    X, X, X, X, X, X, X, X,
-    X, X, X, X, X, X, X, X,
-    X, X, X, X, X, X, X, X,
-    X, X, X, X, X, X, X, X,
-    X, X, X, X, X, X, X, X,
-    X, X, X, X, X, X, X, X
+    x, x, x, x, x, x, x, x,
+    x, x, x, x, x, x, x, x,
+    x, x, x, x, x, x, x, x,
+    x, x, x, x, x, x, x, x,
+    x, x, x, x, x, x, x, x,
+    x, x, x, x, x, x, x, x,
+    x, x, x, x, x, x, x, x,
+    x, x, x, x, x, x, x, x
     ]
 
-def six(O, X):
+def six(_, x):
     return [
-    X, X, O, X, X, O, X, X,
-    X, X, O, X, X, O, X, X,
-    O, O, O, O, O, O, O, O,
-    O, O, O, O, O, O, O, O,
-    O, O, O, O, O, O, O, O,
-    O, O, O, O, O, O, O, O,
-    X, X, O, X, X, O, X, X,
-    X, X, O, X, X, O, X, X
+    x, x, _, _, _, _, x, x,
+    x, x, _, _, _, _, x, x,
+    _, _, _, _, _, _, _, _,
+    x, x, _, _, _, _, x, x,
+    x, x, _, _, _, _, x, x,
+    _, _, _, _, _, _, _, _,
+    x, x, _, _, _, _, x, x,
+    x, x, _, _, _, _, x, x
     ]
 
-def five(O, X):
+def five(_, x):
     return [
-    X, X, O, O, O, O, X, X,
-    X, X, O, O, O, O, X, X,
-    O, O, O, O, O, O, O, O,
-    O, O, O, X, X, O, O, O,
-    O, O, O, X, X, O, O, O,
-    O, O, O, O, O, O, O, O,
-    X, X, O, O, O, O, X, X,
-    X, X, O, O, O, O, X, X
+    x, x, _, _, _, _, x, x,
+    x, x, _, _, _, _, x, x,
+    _, _, _, _, _, _, _, _,
+    _, _, _, x, x, _, _, _,
+    _, _, _, x, x, _, _, _,
+    _, _, _, _, _, _, _, _,
+    x, x, _, _, _, _, x, x,
+    x, x, _, _, _, _, x, x
     ]
 
-def four(O, X):
+def four(_, x):
     return [
-    X, X, O, O, O, O, X, X,
-    X, X, O, O, O, O, X, X,
-    O, O, O, O, O, O, O, O,
-    O, O, O, O, O, O, O, O,
-    O, O, O, O, O, O, O, O,
-    O, O, O, O, O, O, O, O,
-    X, X, O, O, O, O, X, X,
-    X, X, O, O, O, O, X, X
+    x, x, _, _, _, _, x, x,
+    x, x, _, _, _, _, x, x,
+    _, _, _, _, _, _, _, _,
+    _, _, _, _, _, _, _, _,
+    _, _, _, _, _, _, _, _,
+    _, _, _, _, _, _, _, _,
+    x, x, _, _, _, _, x, x,
+    x, x, _, _, _, _, x, x
     ]
 
-def three(O, X):
+def three(_, x):
     return [
-    X, X, O, O, O, O, O, O,
-    X, X, O, O, O, O, O, O,
-    O, O, O, O, O, O, O, O,
-    O, O, O, X, X, O, O, O,
-    O, O, O, X, X, O, O, O,
-    O, O, O, O, O, O, O, O,
-    O, O, O, O, O, O, X, X,
-    O, O, O, O, O, O, X, X
+    x, x, _, _, _, _, _, _,
+    x, x, _, _, _, _, _, _,
+    _, _, _, _, _, _, _, _,
+    _, _, _, x, x, _, _, _,
+    _, _, _, x, x, _, _, _,
+    _, _, _, _, _, _, _, _,
+    _, _, _, _, _, _, x, x,
+    _, _, _, _, _, _, x, x
     ]
 
-def two(O, X):
+def two(_, x):
     return [
-    X, X, O, O, O, O, O, O,
-    X, X, O, O, O, O, O, O,
-    O, O, O, O, O, O, O, O,
-    O, O, O, O, O, O, O, O,
-    O, O, O, O, O, O, O, O,
-    O, O, O, O, O, O, O, O,
-    O, O, O, O, O, O, X, X,
-    O, O, O, O, O, O, X, X
+    x, x, _, _, _, _, _, _,
+    x, x, _, _, _, _, _, _,
+    _, _, _, _, _, _, _, _,
+    _, _, _, _, _, _, _, _,
+    _, _, _, _, _, _, _, _,
+    _, _, _, _, _, _, _, _,
+    _, _, _, _, _, _, x, x,
+    _, _, _, _, _, _, x, x
     ]
 
-def one(O, X):
+def one(_, x):
     return [
-    O, O, O, O, O, O, O, O,
-    O, O, O, O, O, O, O, O,
-    O, O, O, O, O, O, O, O,
-    O, O, O, X, X, O, O, O,
-    O, O, O, X, X, O, O, O,
-    O, O, O, O, O, O, O, O,
-    O, O, O, O, O, O, O, O,
-    O, O, O, O, O, O, O, O
+    _, _, _, _, _, _, _, _,
+    _, _, _, _, _, _, _, _,
+    _, _, _, _, _, _, _, _,
+    _, _, _, x, x, _, _, _,
+    _, _, _, x, x, _, _, _,
+    _, _, _, _, _, _, _, _,
+    _, _, _, _, _, _, _, _,
+    _, _, _, _, _, _, _, _
     ]
 
 # Roll dice
@@ -120,17 +122,17 @@ def display( diceroll, isCombined ):
         display_error()
     else:
         if( isCombined ):
-            X = blue
+            x = blue
         else:
-            X = red
-        sense.set_pixels( int_mod6_to_string( diceroll, O, X) )
+            x = red
+        sense.set_pixels( int_mod6_to_string( diceroll, black, x) )
 
 # Displays error
 def display_error():
-    sense.set_pixels( error(O, red) )
+    sense.set_pixels( error(black, red) )
 
 # Converts an int dice roll into a string for display
-def int_mod6_to_string(value, O, X):
+def int_mod6_to_string(value, _, x):
     return {
         1 : one,
         2 : two,
@@ -138,7 +140,7 @@ def int_mod6_to_string(value, O, X):
         4 : four,
         5 : five,
         6 : six
-    } [value](O, X)
+    } [value](_, x)
 
 @app.route('/')
 def hello_world():
